@@ -16,11 +16,7 @@ export const httpArcjet = arcjetKey
         }),
         detectBot({
           mode: arcjetMode,
-          allow: [
-            "CATEGORY:SEARCH_ENGINE",
-            "CATEGORY:PREVIEW",
-            "CATEGORY:MONITOR",
-          ],
+          allow: ["CATEGORY:SEARCH_ENGINE", "CATEGORY:PREVIEW"],
         }),
         slidingWindow({ mode: arcjetMode, interval: "10s", max: 50 }),
       ],
@@ -36,11 +32,7 @@ export const wsArcjet = arcjetKey
         }),
         detectBot({
           mode: arcjetMode,
-          allow: [
-            "CATEGORY:SEARCH_ENGINE",
-            "CATEGORY:PREVIEW",
-            "CATEGORY:MONITOR",
-          ],
+          allow: ["CATEGORY:SEARCH_ENGINE", "CATEGORY:PREVIEW"],
         }),
         slidingWindow({ mode: arcjetMode, interval: "2s", max: 5 }),
       ],
