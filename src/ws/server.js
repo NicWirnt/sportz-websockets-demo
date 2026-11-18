@@ -178,6 +178,9 @@ export function attachWebSocketServer(server) {
   }
 
   return {
+    broadcastScore(match) {
+      broadcastToAll(wss, { type: "score_updated", data: match });
+    },
     broadcastMatchCreated,
     broadcastCommentary,
   };

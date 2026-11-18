@@ -5,6 +5,9 @@ import { attachWebSocketServer } from "./ws/server.js";
 import { securityMiddleware } from "./arcjet.js";
 import { commentaryRouter } from "./routes/commentary.js";
 
+import { publisherOnly } from "./publisher.js";
+import { pool } from "./db/db.js";
+
 const app = express();
 const PORT = Number(process.env.PORT) || 8000;
 const HOST = process.env.HOST || "0.0.0.0";
@@ -15,15 +18,24 @@ const server = http.createServer(app);
 
 // root route
 app.get("/", (req, res) => {
-  res.json({ message: "Hello from Express on port 8000!" });
+  res.json({ message: "Sportz broadcast API" });
 });
 
-app.use(securityMiddleware());
+app.get("/health", async (_req, res) => {
+  try {
+    await pool.query("SELECT 1 FROM matches LIMIT 1");
+    res.json({ status: "ready" });
+  } catch {
+    res.status(503).json({ status: "unavailable" });
+  }
+});
+app.use(securityMiddleware(), publisherOnly);
 app.use("/matches", matchRouter);
 app.use("/matches/:id/commentary", commentaryRouter);
 
-const { broadcastMatchCreated, broadcastCommentary } =
+const { broadcastMatchCreated, broadcastCommentary, broadcastScore } =
   attachWebSocketServer(server);
+app.locals.broadcastScore = broadcastScore;
 app.locals.broadcastMatchCreated = broadcastMatchCreated;
 app.locals.broadcastCommentary = broadcastCommentary;
 // start server

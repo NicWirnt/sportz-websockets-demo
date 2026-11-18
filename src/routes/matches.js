@@ -1,12 +1,14 @@
 import { Router } from "express";
 import {
   createMatchSchema,
+  updateScoreSchema,
+  matchIdParamSchema,
   listMatchesQuerySchema,
 } from "../validation/matches.js";
 import { matches } from "../db/schema.js";
 import { db } from "../db/db.js";
 import { getMatchStatus } from "../utils/match-status.js";
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 export const matchRouter = Router();
 
@@ -29,11 +31,17 @@ matchRouter.get("/", async (req, res) => {
       .orderBy(desc(matches.createdAt))
       .limit(limit);
 
-    res.json({ data });
+    res.json({
+      data: data.map((match) => ({
+        ...match,
+        status: match.endTime
+          ? getMatchStatus(match.startTime, match.endTime)
+          : match.status,
+      })),
+    });
   } catch (error) {
     res.status(500).json({
       error: "Failed to fetch matches.",
-      details: JSON.stringify(error),
     });
   }
 });
@@ -70,7 +78,22 @@ matchRouter.post("/", async (req, res) => {
   } catch (e) {
     res.status(500).json({
       error: "Failed to create match.",
-      details: JSON.stringify(e),
     });
   }
+});
+
+matchRouter.patch("/:id/score", async (req, res) => {
+  const params = matchIdParamSchema.safeParse(req.params);
+  const body = updateScoreSchema.safeParse(req.body);
+  if (!params.success || !body.success) {
+    return res.status(400).json({ error: "Invalid match ID or score." });
+  }
+  const [match] = await db
+    .update(matches)
+    .set(body.data)
+    .where(eq(matches.id, params.data.id))
+    .returning();
+  if (!match) return res.status(404).json({ error: "Match not found." });
+  res.app.locals.broadcastScore(match);
+  res.json({ data: match });
 });

@@ -1,0 +1,9 @@
+*
+!package.json
+!package-lock.json
+!src/
+!src/**
+!drizzle/
+!drizzle/**
+!scripts/
+!scripts/**
