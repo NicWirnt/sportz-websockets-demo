@@ -1,0 +1,75 @@
+{
+  "version": 2,
+  "skills": {
+    "arcjet": {
+      "source": "arcjet/skills",
+      "commit": "a3efa1dc02da1d996a6861cd4e74c9f38bd674a2",
+      "sourceType": "github",
+      "skillPath": "arcjet/SKILL.md",
+      "computedHash": "940d55aedc44c548dc454dff31a8d26e8fdd043bafbc653674ec143abafa45ba"
+    },
+    "integrate-arcjet-guard-agent-framework-go": {
+      "source": "arcjet/skills",
+      "commit": "a3efa1dc02da1d996a6861cd4e74c9f38bd674a2",
+      "sourceType": "github",
+      "skillPath": "integrate-arcjet-guard-agent-framework-go/SKILL.md",
+      "computedHash": "80ab1abcd3bf8bedfad4bb004e8e31979f27a408ba45433720633ecb1ca29c8f"
+    },
+    "integrate-arcjet-guard-claude-agent-sdk-py": {
+      "source": "arcjet/skills",
+      "commit": "a3efa1dc02da1d996a6861cd4e74c9f38bd674a2",
+      "sourceType": "github",
+      "skillPath": "integrate-arcjet-guard-claude-agent-sdk-py/SKILL.md",
+      "computedHash": "fb9385bcac5adb614b3a1ebec4bdaaa841826cac45d81e6daa00e3e2dd3cb22a"
+    },
+    "integrate-arcjet-guard-claude-managed-agents-py": {
+      "source": "arcjet/skills",
+      "commit": "a3efa1dc02da1d996a6861cd4e74c9f38bd674a2",
+      "sourceType": "github",
+      "skillPath": "integrate-arcjet-guard-claude-managed-agents-py/SKILL.md",
+      "computedHash": "6e147fd9b6c6a156eb66f34bfe25d29c75a3fb2ee967bc8ad29a85c04da275d9"
+    },
+    "integrate-arcjet-guard-cloudflare-think": {
+      "source": "arcjet/skills",
+      "commit": "a3efa1dc02da1d996a6861cd4e74c9f38bd674a2",
+      "sourceType": "github",
+      "skillPath": "integrate-arcjet-guard-cloudflare-think/SKILL.md",
+      "computedHash": "a1971523cae24b4484bdfbbc7049cc7a110fc42a16bb4abc3b594bab04c91e9f"
+    },
+    "integrate-arcjet-guard-crewai": {
+      "source": "arcjet/skills",
+      "commit": "a3efa1dc02da1d996a6861cd4e74c9f38bd674a2",
+      "sourceType": "github",
+      "skillPath": "integrate-arcjet-guard-crewai/SKILL.md",
+      "computedHash": "3656a9b14c7f7526200e98308e722b7a41bc271f156a6e658287f6817d999dc5"
+    },
+    "integrate-arcjet-guard-google-adk-py": {
+      "source": "arcjet/skills",
+      "commit": "a3efa1dc02da1d996a6861cd4e74c9f38bd674a2",
+      "sourceType": "github",
+      "skillPath": "integrate-arcjet-guard-google-adk-py/SKILL.md",
+      "computedHash": "add81ff3980d54c928622928a41077b2ef1550f3ba2676f579a6d4bb43d6a25c"
+    },
+    "integrate-arcjet-guard-langchain-py": {
+      "source": "arcjet/skills",
+      "commit": "a3efa1dc02da1d996a6861cd4e74c9f38bd674a2",
+      "sourceType": "github",
+      "skillPath": "integrate-arcjet-guard-langchain-py/SKILL.md",
+      "computedHash": "03ac6fffd2d3fbd4cecf1ad7875a5d4ac2dea5a34313e91e54f821a518f1a5ee"
+    },
+    "integrate-arcjet-guard-openai-agents-py": {
+      "source": "arcjet/skills",
+      "commit": "a3efa1dc02da1d996a6861cd4e74c9f38bd674a2",
+      "sourceType": "github",
+      "skillPath": "integrate-arcjet-guard-openai-agents-py/SKILL.md",
+      "computedHash": "34a1ec73769061ac00a4181eaee5e11d9582d9c494bd1a4093f05e7cd8661f9e"
+    },
+    "integrate-arcjet-guard-strands-agents-py": {
+      "source": "arcjet/skills",
+      "commit": "a3efa1dc02da1d996a6861cd4e74c9f38bd674a2",
+      "sourceType": "github",
+      "skillPath": "integrate-arcjet-guard-strands-agents-py/SKILL.md",
+      "computedHash": "93e4bd5e052eb1cb119569b2320a6367cd32b740d0bc8b1b3206946d56545950"
+    }
+  }
+}
