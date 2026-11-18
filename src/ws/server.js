@@ -1,4 +1,6 @@
+import { STATUS_CODES } from "node:http";
 import { WebSocket, WebSocketServer } from "ws";
+import { wsArcjet } from "../arcjet.js";
 
 function sendJson(socket, payload) {
   if (socket.readyState !== WebSocket.OPEN) return;
@@ -14,11 +16,49 @@ function broadcast(wss, payload) {
   }
 }
 
+function rejectUpgrade(socket, status) {
+  socket.write(
+    `HTTP/1.1 ${status} ${STATUS_CODES[status]}\r\n` +
+      "Connection: close\r\nContent-Length: 0\r\n\r\n",
+  );
+  socket.destroySoon();
+}
+
 export function attachWebSocketServer(server) {
   const wss = new WebSocketServer({
-    server,
+    noServer: true,
     path: "/ws",
     maxPayload: 1024 * 1024,
+  });
+
+  server.on("upgrade", async (req, socket, head) => {
+    const onSocketError = () => socket.destroy();
+    socket.once("error", onSocketError);
+
+    try {
+      if (!wss.shouldHandle(req)) {
+        rejectUpgrade(socket, 400);
+        return;
+      }
+
+      if (wsArcjet) {
+        const decision = await wsArcjet.protect(req);
+        if (socket.destroyed) return;
+
+        if (decision.isDenied()) {
+          rejectUpgrade(socket, decision.reason.isRateLimit() ? 429 : 403);
+          return;
+        }
+      }
+
+      wss.handleUpgrade(req, socket, head, (ws) => {
+        socket.removeListener("error", onSocketError);
+        wss.emit("connection", ws, req);
+      });
+    } catch (err) {
+      console.error("WS upgrade error", err);
+      socket.destroy();
+    }
   });
 
   wss.on("connection", (socket) => {
