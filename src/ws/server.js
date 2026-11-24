@@ -57,7 +57,7 @@ function rejectUpgrade(socket, status) {
 
 function broadcastToAll(wss, payload) {
   for (const client of wss.clients) {
-    if (client.readyState !== WebSocket.OPEN) continue;
+    if (client.demoFeed || client.readyState !== WebSocket.OPEN) continue;
 
     client.send(JSON.stringify(payload));
   }
@@ -93,7 +93,7 @@ function handleMessage(socket, data) {
   }
 }
 
-export function attachWebSocketServer(server) {
+export function attachWebSocketServer(server, demoSnapshot) {
   const wss = new WebSocketServer({
     noServer: true,
     path: "/ws",
@@ -130,17 +130,21 @@ export function attachWebSocketServer(server) {
     }
   });
 
-  wss.on("connection", (socket) => {
+  wss.on("connection", (socket, req) => {
+    socket.demoFeed =
+      new URL(req.url, "http://localhost").searchParams.get("feed") === "demo";
     socket.isAlive = true;
     socket.on("pong", () => {
       socket.isAlive = true;
     });
     socket.subscriptions = new Set();
 
-    sendJson(socket, {
-      type: "welcome",
-    });
-    socket.on("message", (data) => handleMessage(socket, data));
+    if (socket.demoFeed) {
+      sendJson(socket, { type: "demo_update", data: demoSnapshot() });
+    } else {
+      sendJson(socket, { type: "welcome" });
+      socket.on("message", (data) => handleMessage(socket, data));
+    }
     socket.on("error", () => {
       socket.terminate();
     });
@@ -178,6 +182,12 @@ export function attachWebSocketServer(server) {
   }
 
   return {
+    broadcastDemo(state) {
+      for (const client of wss.clients) {
+        if (client.demoFeed)
+          sendJson(client, { type: "demo_update", data: state });
+      }
+    },
     broadcastScore(match) {
       broadcastToAll(wss, { type: "score_updated", data: match });
     },

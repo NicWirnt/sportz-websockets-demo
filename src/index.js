@@ -7,6 +7,7 @@ import { commentaryRouter } from "./routes/commentary.js";
 
 import { publisherOnly } from "./publisher.js";
 import { pool } from "./db/db.js";
+import { createDemo } from "./demo.js";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 8000;
@@ -29,12 +30,35 @@ app.get("/health", async (_req, res) => {
     res.status(503).json({ status: "unavailable" });
   }
 });
-app.use(securityMiddleware(), publisherOnly);
+app.use(securityMiddleware());
+const demo = createDemo(process.env.DEMO_ENABLED === "true", (state) =>
+  broadcastDemo(state),
+);
+
+app.get("/demo", (_req, res) => {
+  res.set("Cache-Control", "no-store").json({ data: demo.snapshot() });
+});
+app.post("/demo", (req, res) => {
+  if (!req.is("application/json")) return res.sendStatus(415);
+  if (!demo.snapshot().enabled)
+    return res.status(403).json({ error: "The live demo is disabled." });
+  const started = demo.start();
+  res
+    .set("Cache-Control", "no-store")
+    .status(started ? 201 : 200)
+    .json({ data: demo.snapshot() });
+});
+
+app.use(publisherOnly);
 app.use("/matches", matchRouter);
 app.use("/matches/:id/commentary", commentaryRouter);
 
-const { broadcastMatchCreated, broadcastCommentary, broadcastScore } =
-  attachWebSocketServer(server);
+const {
+  broadcastMatchCreated,
+  broadcastCommentary,
+  broadcastScore,
+  broadcastDemo,
+} = attachWebSocketServer(server, demo.snapshot);
 app.locals.broadcastScore = broadcastScore;
 app.locals.broadcastMatchCreated = broadcastMatchCreated;
 app.locals.broadcastCommentary = broadcastCommentary;
